@@ -16,13 +16,16 @@ from langchain.prompts.chat import (
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 
 from typing import Optional
+from pydantic import BaseModel
+
 from src.data.base_table import BaseTable
+from src.shemas.enums import COGFuncEnum
 import json
 import re
 
 
-class ModelAnswer:
-    output: str
+class ModelAnswer(BaseModel):
+    answer: str
 
 
 class COGAPI:
@@ -30,7 +33,6 @@ class COGAPI:
         self,
         auth_token: str,
         prompts_config_file: str,
-        # gen_config: Optional[dict], # Controls model generation params
         scope: str = "GIGACHAT_API_CORP",
     ) -> None:
         self.llm = GigaChat(credentials=auth_token, verify_ssl_certs=False, scope=scope)
@@ -42,24 +44,16 @@ class COGAPI:
         with open(prompts_config_file) as file:
             self.system_prompts = json.load(file)
 
-    def resoner(
-        self,
-        prompt: str,
-        pdf_files: Optional[list[Document] | Document],
-        table: BaseTable,
-    ) -> Optional[ModelAnswer]:
-
+    def resoner(self, prompt: str) -> COGFuncEnum:
         model_prompt = self.system_prompts["reasoner"].format(prompt)
         answer = self.llm.invoke(model_prompt).content
         command_number = re.findall(r"(?m)^(\d+).*", answer)[0]
+        return COGFuncEnum(command_number)
 
-        if command_number == 0:
-            self.add_to_table
-
-    def chat(self) -> ModelAnswer:
+    def chat(self, prompt: str) -> ModelAnswer:
         pass
 
-    def add_to_table(self, table: BaseTable, pdf_file: Document) -> None:
+    def add_to_table(self, pdf_file: Document, fields_names: list[str]) -> list[str]:
         pass
 
     def get_overview(self, pdf_file: Document) -> ModelAnswer:
@@ -70,3 +64,26 @@ class COGAPI:
 
     def compare_papers(self, pdf_files: list[Document], prompt: str) -> ModelAnswer:
         pass
+
+    def _extract_field_names(self, prompt: str) -> list[str]:
+        pass
+
+    def _generate_relevant_question(self, fields_names: list[str]) -> list[str]:
+        pass
+
+    def _extract_relevant_information(
+        self, pdf_file: Document, questions: list[str]
+    ) -> list[str]:
+        pass
+
+    def _success_message(self) -> ModelAnswer:
+        message = ModelAnswer(
+            answer=self.llm.invoke(self.system_prompts["success_message"].content)
+        )
+        return message
+
+    def _error_message(self) -> ModelAnswer:
+        message = ModelAnswer(
+            answer=self.llm.invoke(self.system_prompts["error_message"].content)
+        )
+        return message
