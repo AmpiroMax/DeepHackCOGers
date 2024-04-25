@@ -3,6 +3,13 @@ DeepHack
 
 A short description of the project.
 
+
+## Requirenments
+conda, python 3.10
+```bash
+pip install -r requirenments
+```
+
 Project Organization
 ------------
 
