@@ -1,67 +1,46 @@
-DeepHack
+DeepHack: COGAgent
 ==============================
 
-A short description of the project.
+Наше решение представляет собой научного ассистента встроенного веб-приложение, основанное на платформе Streamlit, которое обеспечивает взаимодействие с GigaChat для загрузки и обработки научных статей в формате PDF. Пользователи могут общаться с GigaChat через удобный чат-интерфейс, прикреплять научные статьи и выполнять различные операции, например:
 
+Добавление статьи в табличку CSV: пользователи могут легко сохранять ссылки на статьи в удобном для дальнейшего анализа формате.
+Создание краткого обзора: GigaChat помогает пользователям быстро ознакомиться с содержанием статьи, выделяя ключевые аспекты.
+Структурированный обзор: предоставляется возможность создавать структурированный обзор статьи с заданными разделами, что позволяет систематизировать информацию.
+Сравнение двух статей (функция в разработке): планируется добавить возможность сравнивать содержание двух статей для выявления сходств и различий.
+Наше приложение также обладает уникальной возможностью запоминать предыдущие взаимодействия с пользователями, что способствует улучшению опыта и персонализации обслуживания.
+
+С технической точки зрения, архитектура проекта включает три основных модуля:
+Модуль фронтенда: ответственный за пользовательский интерфейс, обеспечивает чат и возможность загрузки файлов через Streamlit.
+Модуль сервера: обрабатывает сообщения, полученные от пользователей, и направляет их на модуль взаимодействия с GigaChat.
+Модуль взаимодействия с GigaChat: обеспечивает связь с GigaChat для интерпретации запросов пользователей и выполнения соответствующих операций.
 
 
 ## Requirenments
-conda, python 3.10
+Запуск производился в среде conda, python 3.10 на Apple m3.
 
 ## Getting started
+Скачайе репозиторий:
+```bash
+git clone https://github.com/AmpiroMax/DeepHackCOGers
+cd DeepHackCOGers
+```
+Создайте своё окружение venv или conda. Установите зависимости:
 ```bash
 pip install -r requirenments
+pip install .
 ```
+Команда запуска web demo:
+```bash
+streamlit run src/service/page.py
+```
+
+## Дополнительно
+В папке `notebooks` расположены фыйлы test_cogapi.ipynb, test_reasoning.ipynb, test_cogapi.ipynb. В них показаны примеры работы с COGAgent.
 
 ## Limitations
 На данный момент реализация нашего решения имеет ряд ограничений.
-1. На запросы пользователя модель может не выдать релевантной информации. Особенно это просматривается в запросах на структурированный обзор. Мы обнаружили странное поведение GigaChat в этой задаче и не смогли решить проблему до конца.
+1. На запросы пользователя модель может не выдать релевантной информации. Особенно это просматривается в запросах на структурированный обзор. Мы обнаружили странное поведение GigaChat в этой задаче и не смогли решить проблему до конца. Основной ответ от модели будет выглядить приблизительно так: `Извините, но я не могу предоставить вам ...`.
 2. Время ответа на запрос. Основные функции работают достаточно быстро. Однако запрос на получение обычного обзора в силу api GigaChat выполняется в течение 1.5 минуты, что черезмерно долго. Возможно существуют параметры, ускрояющие процесс, но мы их не успели обнаружить в силу ограниченности времени соревнования.
 
 
-Project Organization
-------------
-
-    ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
-    │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-    │
-    ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting
-    │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
-    │
-    ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
-    ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   └── make_dataset.py
-    │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
-    │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
-
---------
 
