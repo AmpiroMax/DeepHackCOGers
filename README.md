@@ -27,7 +27,7 @@ cd DeepHackCOGers
 Создайте своё окружение venv или conda. Установите зависимости:
 ```bash
 pip install -r requirenments
-pip install .
+pip install -e .
 ```
 Команда запуска web demo:
 ```bash
