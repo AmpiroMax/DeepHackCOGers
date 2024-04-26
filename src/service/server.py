@@ -15,6 +15,7 @@ class COGServer:
         self.table = None
 
     def set_table(self, table: BaseTable) -> None:
+        print("Table was set")
         self.table = table
 
     def get_table(self) -> BaseTable:
@@ -28,12 +29,14 @@ class COGServer:
 
         if not answer.info is None:
             self.table.add_paper_to_table(answer.info)
+            answer = AgentAnswer(answer=", ".join(answer.info))
 
         return answer
 
     def _call_agent(self, message: Message) -> AgentAnswer:
         try:
             func: COGFuncEnum = self.agent.reasoner(message.prompt)
+            print(f"Executing {func.name} command")
         except Exception as e:
             print(f"During reasoning exception was raised. {e=}")
             answer = AgentAnswer(

@@ -3,9 +3,12 @@ import pandas as pd
 
 
 class CsvTable(BaseTable):
-    def __init__(self, table_path: str) -> None:
+    def __init__(self, table_path: str = None, pd_table: pd.DataFrame = None) -> None:
         super().__init__()
-        self.table = pd.read_csv(table_path)
+        if not table_path is None:
+            self.table = pd.read_csv(table_path)
+        else:
+            self.table = pd_table
 
     def save_table(self, save_path: str) -> None:
         self.table.to_csv(save_path)
