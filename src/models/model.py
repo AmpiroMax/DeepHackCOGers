@@ -211,13 +211,13 @@ class COGAgent:
 
     def _success_message(self) -> AgentAnswer:
         message = AgentAnswer(
-            answer=self.llm.invoke(self.system_prompts["success_message"].content)
+            answer=self.llm.invoke(self.system_prompts["success_message"]).content
         )
         return message
 
     def _error_message(self) -> AgentAnswer:
         message = AgentAnswer(
-            answer=self.llm.invoke(self.system_prompts["error_message"].content)
+            answer=self.llm.invoke(self.system_prompts["error_message"]).content
         )
         return message
 
