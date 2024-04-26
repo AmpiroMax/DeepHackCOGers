@@ -3,3 +3,5 @@ gigachat
 chromadb
 streamlit
 streamlit-chat
+pypdf
+pandas
