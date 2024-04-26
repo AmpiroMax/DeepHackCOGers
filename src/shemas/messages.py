@@ -1,7 +1,9 @@
 from typing import Optional
-from pydantic import BaseModel
+from dataclasses import dataclass
+from langchain_core.documents import Document
 
 
-class Message(BaseModel):
+@dataclass
+class Message:
     prompt: str = ""
-    pdf_file: Optional[str] = None
+    pdf_files: Optional[list[Document]] = None

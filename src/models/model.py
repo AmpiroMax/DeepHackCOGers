@@ -30,8 +30,9 @@ import json
 import re
 
 
-class ModelAnswer(BaseModel):
-    answer: str
+class AgentAnswer(BaseModel):
+    answer: str = None
+    info: list[str] = None
 
 
 class COGAgent:
@@ -110,8 +111,8 @@ class COGAgent:
         command_number = int(re.findall(r"(?m)^(\d+).*", answer)[0])
         return COGFuncEnum(command_number)
 
-    def chat(self, prompt: str) -> ModelAnswer:
-        answer = ModelAnswer(
+    def chat(self, prompt: str) -> AgentAnswer:
+        answer = AgentAnswer(
             answer=self.chat_chain_with_memory.invoke(
                 {"input": prompt},
                 {"configurable": {"session_id": "unused"}},
@@ -121,7 +122,7 @@ class COGAgent:
 
     def add_to_table(
         self, pdf_files: list[Document], fields_names: list[str]
-    ) -> list[str]:
+    ) -> AgentAnswer:
         questions = self._generate_relevant_question(fields_names)
         relevant_information = self._extract_relevant_information(pdf_files, questions)
 
@@ -131,12 +132,13 @@ class COGAgent:
             + ", ".join(relevant_information)
             + ".",
         )
-        return relevant_information
+        answer = AgentAnswer(info=relevant_information)
+        return answer
 
-    def get_overview(self, pdf_files: list[Document]) -> ModelAnswer:
+    def get_overview(self, pdf_files: list[Document]) -> AgentAnswer:
         documents = self.summarization_text_splitter.split_documents(pdf_files)
         res = self.summarization_chain.invoke({"input_documents": documents})
-        answer = ModelAnswer(answer=res["output_text"])
+        answer = AgentAnswer(answer=res["output_text"])
 
         self._add_message_to_chat(
             promt="Напиши обзор статьи.",
@@ -146,7 +148,7 @@ class COGAgent:
 
     def get_structured_overview(
         self, pdf_files: list[Document], prompt: str
-    ) -> ModelAnswer:
+    ) -> AgentAnswer:
         fields_names = self._extract_field_names(prompt)
         questions = self._generate_relevant_question(fields_names)
         relevant_information = self._extract_relevant_information(pdf_files, questions)
@@ -156,7 +158,7 @@ class COGAgent:
             field_info = f"{field}:\n{info}\n\n"
             overview += field_info
 
-        answer = ModelAnswer(answer=overview)
+        answer = AgentAnswer(answer=overview)
 
         self._add_message_to_chat(
             promt="Напиши структурированный обзор статьи.",
@@ -165,15 +167,14 @@ class COGAgent:
         )
         return answer
 
-    def compare_papers(self, pdf_files: list[Document], prompt: str) -> ModelAnswer:
-        raise NotImplementedError
+    def compare_papers(self, pdf_files: list[Document], prompt: str) -> AgentAnswer:
+        return self._error_message()
 
     def _extract_field_names(self, prompt: str) -> list[str]:
         model_prompt = self.system_prompts["field_extractor"].format(prompt)
         model_answer = self.llm.invoke(model_prompt).content
 
         fields_list = [field.split(": ")[1] for field in model_answer.split("\n")]
-        # print(fields_list)
         return fields_list
 
     def _generate_relevant_question(self, fields_names: list[str]) -> list[str]:
@@ -188,7 +189,6 @@ class COGAgent:
             # questions or choosing random question each time.
             question = model_answer.split("\n")[0].split(". ")[1]
             question_list.append(question)
-        # print(question_list)
         return question_list
 
     def _extract_relevant_information(
@@ -207,17 +207,16 @@ class COGAgent:
         for question in questions:
             answer = qa_chain.invoke({"query": question})["result"]
             relevant_information.append(answer)
-        # print(relevant_information)
         return relevant_information
 
-    def _success_message(self) -> ModelAnswer:
-        message = ModelAnswer(
+    def _success_message(self) -> AgentAnswer:
+        message = AgentAnswer(
             answer=self.llm.invoke(self.system_prompts["success_message"].content)
         )
         return message
 
-    def _error_message(self) -> ModelAnswer:
-        message = ModelAnswer(
+    def _error_message(self) -> AgentAnswer:
+        message = AgentAnswer(
             answer=self.llm.invoke(self.system_prompts["error_message"].content)
         )
         return message

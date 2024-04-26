@@ -16,6 +16,9 @@ class CsvTable(BaseTable):
     def get_table(self) -> pd.DataFrame:
         return self.table
 
+    def add_paper_to_table(self, data_to_add: list[str]) -> None:
+        self.table.loc[len(self.table.index)] = data_to_add
+
 
 if __name__ == "__main__":
     csv_path = "/Users/ampiro/programs/HACKATONS/DeepHackCOGers/data/raw/table.csv"

@@ -2,8 +2,8 @@ from enum import Enum, auto
 
 
 class COGFuncEnum(Enum):
-    chat = 1
-    get_overview = 2
-    get_structured_overview = 3
-    compare_papers = 4
-    add_to_table = 5
+    CHAT = 1
+    OVERVIEW = 2
+    STRUCTURED_OVERVIEW = 3
+    COMPARE = 4
+    ADD_TO_TABLE = 5
