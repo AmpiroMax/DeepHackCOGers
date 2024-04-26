@@ -101,13 +101,13 @@ class COGAgent:
             history_messages_key="chat_history",
         )
 
-    def resoner(self, prompt: str) -> COGFuncEnum:
+    def reasoner(self, prompt: str) -> COGFuncEnum:
         # Reasoner could be made upon LongChainAgent.
         # Due to limited time we come up with this
         # less robust but easier solution
         model_prompt = self.system_prompts["reasoner"].format(prompt)
         answer = self.llm.invoke(model_prompt).content
-        command_number = re.findall(r"(?m)^(\d+).*", answer)[0]
+        command_number = int(re.findall(r"(?m)^(\d+).*", answer)[0])
         return COGFuncEnum(command_number)
 
     def chat(self, prompt: str) -> ModelAnswer:
